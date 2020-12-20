@@ -1,0 +1,44 @@
+.gameContainer { 
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.leftSide, .rightSide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40%;
+}
+
+.leftSide {
+    border-right: 2px solid red;
+}
+
+.playArenaContainer {
+    width: 80%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.element {
+    background: red;
+    width: 120px;
+    height: 120px;
+}
+
+select {
+    width: 100px;
+    height: 50px;
+}
+
+.panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+}
