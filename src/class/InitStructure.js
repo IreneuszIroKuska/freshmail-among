@@ -41,6 +41,27 @@ class InitStructure {
         return div;
     };
 
+    createScore = (className, count) => {
+        const classNames = className || "panel" 
+        const div = this.createElement('div');
+        div.classList.add(classNames);
+    
+        for (let i = 0; i < count; i++) {
+            const element = this.createElement('div');
+            element.classList.add('scoreCheck');
+            div.appendChild(element);
+        }
+    
+        return div;
+    }
+
+    createGameButton = (className = 'button', text = 'text') => {
+        const button = this.createElement('button');
+        button.classList.add(className);
+        button.innerText = text;
+
+        return button;
+    }
 
     createGameArea = (className) => {
         const div = this.createElement('div');
