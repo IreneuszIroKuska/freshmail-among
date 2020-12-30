@@ -10,15 +10,17 @@ class Game {
 
         for(let i = 0; i < this.rounds; i ++) {
             this.roundChecker[i] = [];
+            const generateRandomNumber = Math.floor((Math.random() * 16) + 1);
 
             if (i === 0) {
                 round[i] = {
-                    game: [Math.floor((Math.random() * 16) + 1)],
+                    game: [generateRandomNumber],
                     isFinish: false,
                 };
             } else { 
+                const generated = generateRandomNumber;
                 round[i] = {
-                    game: [...round[i - 1].game, Math.floor((Math.random() * 16) + 1)],
+                    game: [...round[i - 1].game, round[i - 1].game[i - 1] === generated ? generateRandomNumber : generated],
                     isFinish: false,
                 };
             }
@@ -28,8 +30,6 @@ class Game {
             ...this.game,
             round,
         }
-
-        console.log(this.game, this.roundChecker, 'rounds');
     };
 
 
@@ -49,40 +49,44 @@ class Game {
         const game = this.game;
         let x = 0;
         let isInitRun = true;
+        let counter = 0;
+        let valueArray = [];
+        let isCompare = false;
 
-        for (let i = 0; i < game.round.length; i++) {
-            game.round[i].game.forEach(element => {
+        const timerMethod = () => {
+            game.round[x].game.forEach((element, index) => {
+                const timer = index + 1;
                 setTimeout(() => {
-                    areaChildren[element].style.cssText = 'background: blue;';
-                }, i * 500)
+                    areaChildren[element - 1].style.cssText = 'background: blue;';
+                    setTimeout(() => {
+                        areaChildren[element - 1].style.cssText = 'background: red;';
+                    }, 500)
+                }, timer * 500)
             });
-        } 
+        }
 
-        // while(game.round[x]) {
-
-        // }
-
-        // for (let item in game.round) {
-        //     console.log(item, 'item');
-        //     for(let games in game.round[item].game) {
-        //         console.log(games, 'game');
-        //         // elt.style.cssText
-        //         areaChildren[games].style.cssText = 'background: blue;';
-        //     }
-        // }
-
-        // for (let i = 1; i <= 3; i++) {
-        //     (function(index) {
-        //         setTimeout(function() { 
-        //             console.log(index); 
-        //         }, i * 500);
-        //     })(i);
-        // }
+        if (isInitRun) {
+            timerMethod()
+        }
 
         playAreaChildren.forEach(element => {
             element.addEventListener('click', event => {
-                console.log(element, 'element');
-                console.log(event.target.getAttribute('value'), 'event target');
+                valueArray.push(parseInt(event.target.getAttribute('value')));
+                isCompare = JSON.stringify(game.round[x].game) === JSON.stringify(valueArray);
+                counter++;
+                if (counter === game.round[x].game.length && isCompare) {
+                    isInitRun = false;
+                    counter = 0;
+                    x++;
+                    valueArray = []
+                    timerMethod()
+                } 
+                if (counter === game.round[x].game.length && !isCompare) {
+                    valueArray = []
+                    counter = 0;
+                    isInitRun = false;
+                    timerMethod()
+                }
             })
         })
     }
@@ -96,8 +100,6 @@ class Game {
     resetGame = () => {
         this.game = {};
         this.roundChecker = [];
-
-        console.log(this.game, this.roundChecker, 'reset');
     };
 }
 
