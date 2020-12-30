@@ -34,7 +34,8 @@ class InitStructure {
         // for increase speed
         for (let i = 0; i < elementsCount; i++) {
             const childDiv = this.createElement('div');
-            childDiv.classList.add('element', `${i + 1}`);
+            childDiv.classList.add('element');
+            childDiv.setAttribute('value', `${i + 1}`)
             div.appendChild(childDiv)
         }
 

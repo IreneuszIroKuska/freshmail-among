@@ -45,16 +45,22 @@ class Game {
 
     randomChooser = (area, playerArea) => {
         const areaChildren = Array.from(area.children);
+        const playAreaChildren = Array.from(playerArea.children);
         const game = this.game;
-
-        console.log(game, 'game');
+        let x = 0;
+        let isInitRun = true;
 
         for (let i = 0; i < game.round.length; i++) {
             game.round[i].game.forEach(element => {
-                console.log(element, 'element');
-                areaChildren[element].style.cssText = 'background: blue;';
+                setTimeout(() => {
+                    areaChildren[element].style.cssText = 'background: blue;';
+                }, i * 500)
             });
         } 
+
+        // while(game.round[x]) {
+
+        // }
 
         // for (let item in game.round) {
         //     console.log(item, 'item');
@@ -65,13 +71,20 @@ class Game {
         //     }
         // }
 
-        for (let i = 1; i <= 3; i++) {
-            (function(index) {
-                setTimeout(function() { 
-                    console.log(index); 
-                }, i * 500);
-            })(i);
-        }
+        // for (let i = 1; i <= 3; i++) {
+        //     (function(index) {
+        //         setTimeout(function() { 
+        //             console.log(index); 
+        //         }, i * 500);
+        //     })(i);
+        // }
+
+        playAreaChildren.forEach(element => {
+            element.addEventListener('click', event => {
+                console.log(element, 'element');
+                console.log(event.target.getAttribute('value'), 'event target');
+            })
+        })
     }
     
     startGame = () => {

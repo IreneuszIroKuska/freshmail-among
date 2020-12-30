@@ -34,17 +34,18 @@
 
 .playArenaContainer {
     width: 80%;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
     gap: 8px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
 }
 
 .element {
-    background: red;
-    width: 100px;
-    height: 100px;
+  width: 100px;
+  height: 100px;
+  border: 1px solid ;
+  box-sizing: border-box;
+  background: red;
 }
 
 select {
