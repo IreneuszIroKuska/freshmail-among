@@ -3,6 +3,13 @@ class Game {
         this.rounds = rounds;
         this.roundChecker = [];
         this.game = {};
+        this.x = 0;
+        this.isInitRun = true;
+        this.counter = 0;
+        this.valueArray = [];
+        this.isCompare = false;
+        this.innerTimeout = null;
+        this.outerTimeout = null;
     }
 
     generateGames = () => {
@@ -15,13 +22,13 @@ class Game {
             if (i === 0) {
                 round[i] = {
                     game: [generateRandomNumber],
-                    isFinish: false,
                 };
             } else { 
                 const generated = generateRandomNumber;
                 round[i] = {
-                    game: [...round[i - 1].game, round[i - 1].game[i - 1] === generated ? generateRandomNumber : generated],
-                    isFinish: false,
+                    game: [...round[i - 1].game, round[i - 1].game[i - 1] === generated ?
+                        generateRandomNumber : generated
+                    ],
                 };
             }
         }
@@ -43,63 +50,93 @@ class Game {
         };
     }
 
-    randomChooser = (area, playerArea) => {
-        const areaChildren = Array.from(area.children);
-        const playAreaChildren = Array.from(playerArea.children);
-        const game = this.game;
-        let x = 0;
-        let isInitRun = true;
-        let counter = 0;
-        let valueArray = [];
-        let isCompare = false;
-
-        const timerMethod = () => {
-            game.round[x].game.forEach((element, index) => {
+    timerMethod = (game, areaChildren) => {
+        if (game.round[this.x]) {
+            game.round[this.x].game.forEach((element, index) => {
+                const currentElementStyle = areaChildren[element - 1].style;
                 const timer = index + 1;
-                setTimeout(() => {
-                    areaChildren[element - 1].style.cssText = 'background: blue;';
-                    setTimeout(() => {
-                        areaChildren[element - 1].style.cssText = 'background: red;';
+                this.outerTimeout = setTimeout(() => {
+                    currentElementStyle.cssText = 'background: blue;';
+                    this.innerTimeout = setTimeout(() => {
+                        currentElementStyle.cssText = 'background: red;';
                     }, 500)
                 }, timer * 500)
             });
         }
+    }
 
-        if (isInitRun) {
-            timerMethod()
+    handleCurrentGame = (currentGame, className = 'scoreLeft') => {
+        const scoreLeft = document.getElementsByClassName(className);
+        const scoreLeftChildren = Array.from(scoreLeft[0].children);
+
+        scoreLeftChildren.forEach((element, index) => {
+            if ( index <= currentGame) {
+                element.style.cssText = 'background: green;';
+            }
+        });
+    }
+
+    callbackMethod = (event, game, areaChildren) => {
+        const currentGame = game.round[this.x].game.length;
+        this.valueArray.push(parseInt(event.target.getAttribute('value')));
+        this.isCompare = JSON.stringify(game.round[this.x].game) === JSON.stringify(this.valueArray);
+        this.counter++;
+        const isMoreGames = this.x < game.round.length;
+        if (this.counter === currentGame && this.isCompare) {
+            this.isInitRun = false;
+            this.counter = 0;
+            this.handleCurrentGame(this.x, 'scoreRight');
+            if (isMoreGames) {
+                this.x++;
+                this.valueArray = [];
+                this.timerMethod(game, areaChildren);
+            }
+            this.handleCurrentGame(this.x);
+        } 
+        if (this.x < game.round.length && (this.counter === currentGame && !this.isCompare)) {
+            this.valueArray = [];
+            this.counter = 0;
+            this.isInitRun = false;
+            this.timerMethod(game, areaChildren);
+        }
+    }
+
+    randomChooser = (area, playerArea) => {
+        const areaChildren = Array.from(area.children);
+        const playAreaChildren = Array.from(playerArea.children);
+        const game = this.game;
+
+        if (this.isInitRun) {
+            this.timerMethod(game, areaChildren);
         }
 
         playAreaChildren.forEach(element => {
-            element.addEventListener('click', event => {
-                valueArray.push(parseInt(event.target.getAttribute('value')));
-                isCompare = JSON.stringify(game.round[x].game) === JSON.stringify(valueArray);
-                counter++;
-                if (counter === game.round[x].game.length && isCompare) {
-                    isInitRun = false;
-                    counter = 0;
-                    x++;
-                    valueArray = []
-                    timerMethod()
-                } 
-                if (counter === game.round[x].game.length && !isCompare) {
-                    valueArray = []
-                    counter = 0;
-                    isInitRun = false;
-                    timerMethod()
-                }
-            })
-        })
+            element.onclick = (event) => this.callbackMethod(event, game, areaChildren);
+        });
     }
     
     startGame = () => {
         this.generateGames();
         const { area, playerArea } = this.getGameArea();
         this.randomChooser(area, playerArea);
+        this.handleCurrentGame(0);
     };
 
     resetGame = () => {
+        const { playerArea } = this.getGameArea();
+        const playAreaChildren = Array.from(playerArea.children);
         this.game = {};
         this.roundChecker = [];
+        this.x = 0;
+        this.isInitRun = true;
+        this.counter = 0;
+        this.valueArray = [];
+        this.isCompare = false;
+        playAreaChildren.forEach(element => {
+            element.onclick = null;
+        })
+        clearTimeout(this.innerTimeout);
+        clearTimeout(this.outerTimeout);
     };
 }
 

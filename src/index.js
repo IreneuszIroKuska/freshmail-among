@@ -34,22 +34,21 @@ window.addEventListener('load', () => {
         select.setAttribute('disabled', 'disabled');
         resetButton.removeAttribute('disabled');
         game.startGame();
-
-        console.log('start button');
     });
 
     resetButton.addEventListener('click', () => {
         startButton.removeAttribute('disabled');
         select.removeAttribute('disabled');
+        select.value = 5;
         resetButton.setAttribute('disabled', 'disabled');
         game.resetGame();
-
         leftSide.removeChild(scoreLeft);
         rightSide.removeChild(scoreRight);
         scoreLeft = initStructure.createScore('scoreLeft', parseInt(config.defaultGames));
         scoreRight = initStructure.createScore('scoreRight', parseInt(config.defaultGames));
         leftSide.appendChild(scoreLeft);
         rightSide.appendChild(scoreRight);
+        game = new Game(config.defaultGames);    
     });
 
     panelContainer.classList.add('panel')
