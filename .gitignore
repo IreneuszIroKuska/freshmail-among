@@ -11,5 +11,5 @@ yarn.lock*
 node_modules/
 
 # Parcel related files
-dist/
+/dist/
 .cache/
